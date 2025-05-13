@@ -59,8 +59,8 @@ for t in range(Nt):
         if v >= 0 and w >= 0: 
             D[v,w] = LOOP
             D[w,v] = LOOP
-            W[v,w] = 1000000
-            W[w,v] = 1000000
+            W[v,w] = 1000
+            W[w,v] = 1000
 
     D = floyd_warshall(D, directed = False)
 
@@ -70,18 +70,27 @@ for t in range(Nt):
                 if Cs[i,t] == Cs[j,t]:
                     if D[i, j] > RAD[Cs[i,t]]:
                         D[i, j] = RAD[Cs[i,t]]
-                else:
-                    if D[i, j]  > RAD[Cs[i,t]] + RAD[Cs[j,t]]:
-                        D[i, j] = RAD[Cs[i,t]] + RAD[Cs[j,t]]
+                        W[i, j] = 0.001
 
-    #print(np.max(D))
-    #print(list(D[0]))
+    D = floyd_warshall(D, directed = False)
+
+    #for i,c in enumerate(Cs[:,t]):
+    #
+    #    D[i,Dc[c]] = RAD[c]
+    #    D[Dc[c],i] = RAD[c]
+
+    print(np.max(D))
+    print(list(D[0]))
     #print(D)
     #print(W)
-    X = _smacof_single(D,init=X,weights=W) #SMACOF(D)[:N] # CLASSICAL_MDS(D)[:N]
+    #X = CLASSICAL_MDS(D)
+
+    for _ in range(10):
+        X = _smacof_single(D,init=X,weights=W)#_smacof_single(D,init=X,weights=W) #SMACOF(D)[:N] # CLASSICAL_MDS(D)[:N]
+
     print(t, round(time.time() - t0, 3))
 
-    write_mmcif(X, cif_file_name = "cif5/test_{}.cif".format(t))
+    write_mmcif(X[:N], cif_file_name = "cif5/test_{}.cif".format(t))
 
     #print(X[:20])
 
